@@ -2,27 +2,35 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"os"
 )
 
-var (
-	showHelp      bool
-	prefixFormat  string
-	migrationName string
-)
+func newCommand(args []string) {
+	var (
+		format string
+		name   string
+	)
+	fs := flag.NewFlagSet("new", flag.ExitOnError)
+	fs.StringVar(&format, "format", "date", "shorthand of format")
+	fs.StringVar(&name, "name", "", "specify the file name")
 
-func init() {
-	flag.BoolVar(&showHelp, "h", false, "shorthand of help")
-	flag.BoolVar(&showHelp, "help", false, "show this help")
-	flag.StringVar(&prefixFormat, "f", "date", "shorthand of format")
-	flag.StringVar(&prefixFormat, "format", "date", "specify the file prefix format")
-	flag.StringVar(&migrationName, "n", "", "shorthand of name")
-	flag.StringVar(&migrationName, "name", "", "specify the file name")
+	fs.Parse(args)
+	fmt.Println("format:", format)
+	fmt.Println("name:", name)
 }
 
 func main() {
 	flag.Parse()
 
-	if showHelp {
-		flag.Usage()
+	args := flag.Args()
+	if len(args) == 0 {
+		os.Exit(0)
+	}
+	switch args[0] {
+	case "new":
+		newCommand(args[1:])
+	default:
+		os.Exit(0)
 	}
 }
