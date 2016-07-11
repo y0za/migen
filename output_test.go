@@ -5,7 +5,42 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 )
+
+func TestFileNameWithSystemInfo(t *testing.T) {
+	var dc int64 = 123
+	dt := time.Date(2016, 7, 11, 22, 38, 59, 0, time.UTC)
+	tests := []struct {
+		format    string
+		name      string
+		count     int64
+		now       time.Time
+		expected  string
+		expectErr bool
+	}{
+		{"counter", "", dc, dt, "123.sql", false},
+		{"counter", "foo", dc, dt, "123foo.sql", false},
+		{"none", "foo", dc, dt, "foo.sql", false},
+		{"none", "", dc, dt, "", true},
+		{"unix", "foo", dc, dt, "1468276739foo.sql", false},
+		{"date", "foo", dc, dt, "20160711223859foo.sql", false},
+		{"other", "foo", dc, dt, "20160711223859foo.sql", false},
+	}
+
+	for _, tt := range tests {
+		result, err := fileNameWithSystemInfo(tt.format, tt.name, tt.count, tt.now)
+		if tt.expectErr && err == nil {
+			t.Errorf("Expected error, actual none")
+		}
+		if !tt.expectErr && err != nil {
+			t.Errorf("Expected none error, actual error '%s'", err.Error())
+		}
+		if result != tt.expected {
+			t.Errorf("Expected '%s', actual '%s'", tt.expected, result)
+		}
+	}
+}
 
 func TestExistingFiles(t *testing.T) {
 	fileNames := map[string]bool{

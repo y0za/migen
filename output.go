@@ -8,10 +8,10 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"time"
 )
 
 var (
-	// currentTime = time.Now
 	countRegexp *regexp.Regexp
 )
 
@@ -21,6 +21,37 @@ func init() {
 	if err != nil {
 		log.Fatal("fail to compile migration count regexp")
 	}
+}
+
+func fileName(format, name string) (string, error) {
+	files, err := existingFiles(".")
+	if err != nil {
+		return "", err
+	}
+
+	count := nextMigrationCount(files)
+	now := time.Now()
+	return fileNameWithSystemInfo(format, name, count, now)
+}
+
+func fileNameWithSystemInfo(format, name string, count int64, now time.Time) (string, error) {
+	var prefix string
+
+	switch format {
+	case "counter":
+		prefix = fmt.Sprintf("%d", count)
+	case "unix":
+		prefix = fmt.Sprintf("%d", now.Unix())
+	case "none":
+		if name == "" {
+			return "", errors.New("Not allowed empty name when format is none")
+		}
+	case "date":
+		fallthrough
+	default:
+		prefix = now.Format("20060102150405")
+	}
+	return fmt.Sprintf("%s%s.sql", prefix, name), nil
 }
 
 func existingFiles(dirPath string) ([]string, error) {
