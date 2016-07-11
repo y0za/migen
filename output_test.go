@@ -1,6 +1,49 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"testing"
+)
+
+func TestExistingFiles(t *testing.T) {
+	fileNames := map[string]bool{
+		"1.sql":              true,
+		"hoge.sql":           true,
+		"20060102150405.sql": true,
+		".sql":               true,
+	}
+
+	dir, err := ioutil.TempDir("", "migrations")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(dir)
+
+	for n, _ := range fileNames {
+		path := fmt.Sprintf("%s/%s", dir, n)
+		ioutil.WriteFile(path, []byte{}, 0600)
+	}
+
+	files, err := existingFiles(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, n := range files {
+		_, exists := fileNames[n]
+		if !exists {
+			t.Errorf("Unexpected file name %s", n)
+			continue
+		}
+		fileNames[n] = false
+	}
+	for n, leaked := range fileNames {
+		if leaked {
+			t.Errorf("return value does't include %s", n)
+		}
+	}
+}
 
 func TestNextMigrationCount(t *testing.T) {
 	tests := []struct {

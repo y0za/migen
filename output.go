@@ -1,7 +1,11 @@
 package main
 
 import (
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 	"regexp"
 	"strconv"
 )
@@ -17,6 +21,29 @@ func init() {
 	if err != nil {
 		log.Fatal("fail to compile migration count regexp")
 	}
+}
+
+func existingFiles(dirPath string) ([]string, error) {
+	dirInfo, err := os.Stat(dirPath)
+	if err != nil {
+		return nil, err
+	}
+	if dirInfo.IsDir() == false {
+		msg := fmt.Sprintf("%d is not directory", dirPath)
+		return nil, errors.New(msg)
+	}
+
+	fileInfoList, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		return nil, err
+	}
+	fileNames := make([]string, 0)
+	for _, fi := range fileInfoList {
+		if fi.IsDir() == false {
+			fileNames = append(fileNames, fi.Name())
+		}
+	}
+	return fileNames, nil
 }
 
 func nextMigrationCount(fileNames []string) int64 {
