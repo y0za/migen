@@ -6,10 +6,13 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"time"
 )
+
+const migrationTemplate = "-- +migrate Up\n\n-- +migrate Down"
 
 var (
 	countRegexp *regexp.Regexp
@@ -21,6 +24,15 @@ func init() {
 	if err != nil {
 		log.Fatal("fail to compile migration count regexp")
 	}
+}
+
+func createFile(name, dirPath string) error {
+	abs, err := filepath.Abs(dirPath)
+	if err != nil {
+		return err
+	}
+	output := filepath.Join(abs, name)
+	return ioutil.WriteFile(output, []byte(migrationTemplate), 0666)
 }
 
 func fileName(format, name string) (string, error) {
