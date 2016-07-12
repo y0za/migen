@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -12,12 +13,22 @@ func newCommand(args []string) {
 		name   string
 	)
 	fs := flag.NewFlagSet("new", flag.ExitOnError)
-	fs.StringVar(&format, "format", "date", "shorthand of format")
+	fs.StringVar(&format, "format", "date", "specify the format of prefix")
 	fs.StringVar(&name, "name", "", "specify the file name")
 
 	fs.Parse(args)
-	fmt.Println("format:", format)
-	fmt.Println("name:", name)
+
+	fn, err := fileName(format, name)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	err = createFile(fn, ".")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(fn, "is generated")
 }
 
 func main() {
