@@ -7,6 +7,17 @@ import (
 	"os"
 )
 
+func init() {
+	flag.Usage = func() {
+		fmt.Print(`usage: migen <command> [option]
+
+Commands:
+	new [options] : Generate a migration file
+`)
+		os.Exit(0)
+	}
+}
+
 func newCommand(args []string) {
 	var (
 		format string
@@ -36,12 +47,12 @@ func main() {
 
 	args := flag.Args()
 	if len(args) == 0 {
-		os.Exit(0)
+		flag.Usage()
 	}
 	switch args[0] {
 	case "new":
 		newCommand(args[1:])
 	default:
-		os.Exit(0)
+		flag.Usage()
 	}
 }
