@@ -56,7 +56,7 @@ func TestExistingFiles(t *testing.T) {
 	}
 	defer os.RemoveAll(dir)
 
-	for n, _ := range fileNames {
+	for n := range fileNames {
 		path := fmt.Sprintf("%s/%s", dir, n)
 		ioutil.WriteFile(path, []byte{}, 0600)
 	}

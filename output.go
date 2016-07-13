@@ -80,7 +80,7 @@ func existingFiles(dirPath string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	fileNames := make([]string, 0)
+	var fileNames []string
 	for _, fi := range fileInfoList {
 		if fi.IsDir() == false {
 			fileNames = append(fileNames, fi.Name())
@@ -90,7 +90,7 @@ func existingFiles(dirPath string) ([]string, error) {
 }
 
 func nextMigrationCount(fileNames []string) int64 {
-	var maxCount int64 = 0
+	var maxCount int64
 	for _, name := range fileNames {
 		matches := countRegexp.FindStringSubmatch(name)
 		if len(matches) < 2 {
