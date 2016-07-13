@@ -72,7 +72,7 @@ func existingFiles(dirPath string) ([]string, error) {
 		return nil, err
 	}
 	if dirInfo.IsDir() == false {
-		msg := fmt.Sprintf("%d is not directory", dirPath)
+		msg := fmt.Sprintf("%s is not directory", dirPath)
 		return nil, errors.New(msg)
 	}
 
