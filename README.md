@@ -8,7 +8,7 @@ This tool is in development.
 
 ## Installation
 ```
-$ go get github.com/y0za/migen
+$ go get -u github.com/y0za/migen
 ```
 
 ## License
