@@ -1,6 +1,6 @@
 # migen
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/y0za/migen)](https://goreportcard.com/report/github.com/y0za/migen)
+[![Build Status](https://travis-ci.org/y0za/migen.svg?branch=master)](https://travis-ci.org/y0za/migen) [![Go Report Card](https://goreportcard.com/badge/github.com/y0za/migen)](https://goreportcard.com/report/github.com/y0za/migen)
 
 template generator tool for [rubenv/sql-migrate](https://github.com/rubenv/sql-migrate)
 
